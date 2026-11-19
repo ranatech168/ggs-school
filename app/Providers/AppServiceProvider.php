@@ -17,7 +17,13 @@ class AppServiceProvider extends ServiceProvider
     {
         Paginator::useBootstrapFive();
 
-        if ($this->app->environment('production') || env('APP_ENV') === 'production') {
+        if (
+            $this->app->environment('production')
+            || env('APP_ENV') === 'production'
+            || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+            || (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on')
+            || str_contains(request()->getHttpHost(), 'vercel.app')
+        ) {
             URL::forceScheme('https');
         }
     }
